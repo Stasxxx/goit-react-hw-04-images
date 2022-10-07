@@ -1,20 +1,21 @@
+import { SearchbarHeader,SearchForm, SearchFormButton, SearchFormButtonLabel, SearchFormInput } from "./Searchbar.styled";
 
 export const Searchbar = () => {
     return (
-        <header className="searchbar">
-            <form className="form">
-                <button type="submit" className="button">
-                <span className="button-label">Search</span>
-                </button>
+        <SearchbarHeader className="searchbar">
+            <SearchForm className="form">
+                <SearchFormButton type="submit" className="button">
+                <SearchFormButtonLabel className="button-label">Search</SearchFormButtonLabel>
+                </SearchFormButton>
 
-                <input
+                <SearchFormInput
                 className="input"
                 type="text"
-                // autocomplete="off"
-                // autofocus
+                autocomplete="off"
+                autoFocus
                 placeholder="Search images and photos"
                 />
-            </form>
-        </header>
+            </SearchForm>
+        </SearchbarHeader>
     )
 }

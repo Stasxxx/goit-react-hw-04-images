@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import axios from 'axios';
 import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
 
 
 axios.defaults.baseURL = 'https://pixabay.com/api';
@@ -14,6 +15,10 @@ export class App extends Component {
   async componentDidMount() {
   try {
     const response = await axios.get(`/?key=${KEY}&q=cat&page=1&image_type=photo&orientation=horizontal&per_page=12`)
+    // console.log(response.data)
+    this.setState({
+      images: [...response.data.hits],
+    })
   } catch (error) {
     
   }
@@ -22,7 +27,8 @@ export class App extends Component {
   render() {
     return (
       <>
-      <Searchbar />
+        <Searchbar />
+        <ImageGallery images={this.state.images} />
       </>
     );
     
