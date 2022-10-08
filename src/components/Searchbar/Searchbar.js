@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { toast } from 'react-toastify';
 import { FcSearch } from "react-icons/fc";
 import { SearchbarHeader, SearchForm, SearchFormButton, SearchFormButtonLabel, SearchFormInput } from "./Searchbar.styled";
 
@@ -8,13 +9,16 @@ export class Searchbar extends Component{
     }
 
     handleNameChange = e => {
-        // console.log(e.currentTarget.value)
         this.setState({imageName: e.currentTarget.value.toLowerCase()})
     }
 
     handleSubmit = e => {
         e.preventDefault();
 
+        if (this.state.imageName.trim() === '') {
+        toast.error('Введіть імя картинки')
+        return
+        }
         this.props.onSubmit(this.state.imageName)
         this.setState({imageName: ''})
     }
@@ -23,9 +27,9 @@ export class Searchbar extends Component{
         return (
         <SearchbarHeader>
             <SearchForm onSubmit={this.handleSubmit}>
-                <SearchFormButton type="submit" className="button">
+                <SearchFormButton type="submit">
                     <FcSearch/>
-                <SearchFormButtonLabel className="button-label">Search</SearchFormButtonLabel>
+                <SearchFormButtonLabel>Search</SearchFormButtonLabel>
                 </SearchFormButton>
 
                 <SearchFormInput
