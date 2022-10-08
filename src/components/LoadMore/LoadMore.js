@@ -6,19 +6,18 @@ export class LoadMore extends Component{
         page: 1,
     }
 
-    handleAddImage = (e) => {
+    handleAddPage = (e) => {
         if (e.currentTarget) {
             this.setState(prevState => {
-            console.log(prevState.page + 1)
-                return { page: prevState.page + 1 }
+             return { page: prevState.page + 1 }
         });
         }
-        
+        this.props.onClick(this.state.page)
     }
 
     render() {
         return (
-        <Btn type="button" onClick={this.handleAddImage}>Load More</Btn>
+        <Btn type="button" onClick={this.handleAddPage}>Load More</Btn>
     )
     }
     

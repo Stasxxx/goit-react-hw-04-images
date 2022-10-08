@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ContentLoader from 'react-content-loader';
 import axios from 'axios';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -17,26 +18,36 @@ export class App extends Component {
     imageName: '',
   }
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevState.imageName !== this.state.imageName) {
-      try {
-    const response = await axios.get(`/?key=${KEY}&q=${this.state.imageName}&${this.state.page}=1&image_type=photo&orientation=horizontal&per_page=12`)
-    // console.log(response.data)
+
+  handleFormSubmit = imageName => {
     this.setState({
-      images: [...response.data.hits],
+      images: [],
+      page: 1,
+      imageName: imageName,
+      isLoadingImage: false,
+    });
+  };
+
+  async componentDidUpdate(_, prevState) {
+    if (prevState.imageName !== this.state.imageName || prevState.page !== this.state.page) {
+    try {
+        this.setState({isLoadingImage: true,})
+    const response = await axios.get(`/?key=${KEY}&q=${this.state.imageName}&page=${this.state.page}&image_type=photo&orientation=horizontal&per_page=12`)
+    
+    this.setState({
+      images: [...this.state.images, ...response.data.hits],
+      isLoadingImage: true,
     })
     } catch (error) {
     
     }
     }
   }
-  
 
-  handleFormSubmit = imageName => {
-    this.setState({ imageName });
-  };
-
-  
+  handleAddPage = page => {
+    this.setState({ page });
+    // console.log(page)
+  }
 
   
 
@@ -45,7 +56,25 @@ export class App extends Component {
       <>
         <Searchbar onSubmit={this.handleFormSubmit} />
         <ImageGallery images={this.state.images} />
-        {this.state.images.length >0 && <LoadMore />}
+        {this.state.images.length > 0 && <LoadMore onClick={this.handleAddPage} />}
+        
+        {this.state.isLoadingImage && <ContentLoader 
+            speed={1.5}
+            width={1800}
+            height={860}
+            viewBox="0 0 1800 860"
+            backgroundColor="#f3f3f3"
+            foregroundColor="#ecebeb"
+          >
+          <rect x="10" y="10" rx="0" ry="0" width="360" height="260" /> 
+          <rect x="390" y="10" rx="0" ry="0" width="360" height="260" />
+          <rect x="770" y="10" rx="0" ry="0" width="360" height="260" />
+          <rect x="1150" y="10" rx="0" ry="0" width="360" height="260" />
+          <rect x="10" y="280" rx="0" ry="0" width="360" height="260" />
+          <rect x="390" y="280" rx="0" ry="0" width="360" height="260" />
+          <rect x="770" y="280" rx="0" ry="0" width="360" height="260" />
+          <rect x="1150" y="280" rx="0" ry="0" width="360" height="260" />
+        </ContentLoader>}
         
         <ToastContainer autoClose={2500} position="top-center"/>
       </>
