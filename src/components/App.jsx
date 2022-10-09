@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ContentLoader from 'react-content-loader';
-import axios from 'axios';
+// import axios from 'axios';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { LoadMore } from 'components/LoadMore/LoadMore';
