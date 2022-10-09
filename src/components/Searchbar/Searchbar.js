@@ -8,23 +8,27 @@ export class Searchbar extends Component{
         imageName: '',
     }
 
-    handleNameChange = e => {
+    handleNameChange= e => {
         this.setState({imageName: e.currentTarget.value.toLowerCase()})
     }
 
+   
     handleSubmit = e => {
         e.preventDefault();
 
         if (this.state.imageName.trim() === '') {
-        toast.error('Введіть імя картинки')
+        toast.error('Введіть найменування картинки')
         return
         }
         this.props.onSubmit(this.state.imageName)
         this.setState({imageName: ''})
     }
+    
 
     render() {
         return (
+            
+            
         <SearchbarHeader>
             <SearchForm onSubmit={this.handleSubmit}>
                 <SearchFormButton type="submit">
@@ -42,7 +46,8 @@ export class Searchbar extends Component{
                 onChange={this.handleNameChange}    
                 />
             </SearchForm>
-        </SearchbarHeader>
+            </SearchbarHeader>
+            
     )}
     
 }
