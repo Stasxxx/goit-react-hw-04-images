@@ -20,7 +20,7 @@ export class ModalImg extends Component {
     handleKeyDown = e => {
                   
             if (e.code === 'Escape') {
-                console.log(e.code)
+                
                 this.props.onClose()
             }
     }

@@ -6,11 +6,11 @@ import axios from 'axios';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { LoadMore } from 'components/LoadMore/LoadMore';
-import {ModalImg} from 'components/Modal/Modal'
+import { ModalImg } from 'components/Modal/Modal';
+import { addImages } from 'components/services/api';
 
-
-axios.defaults.baseURL = 'https://pixabay.com/api';
-const KEY = '29487133-26ae31273c20ec953386c6e64';
+// axios.defaults.baseURL = 'https://pixabay.com/api';
+// const KEY = '29487133-26ae31273c20ec953386c6e64';
 // axios.defaults.headers.common['x-api-key'] = process.env.REACT_APP_API_KEY;
 export class App extends Component {
   state = {
@@ -28,21 +28,23 @@ export class App extends Component {
       page: 1,
       imageName: imageName,
       largeImageURL: '',
+      error: false,
     });
   };
 
   async componentDidUpdate(_, prevState) {
     if (prevState.imageName !== this.state.imageName || prevState.page !== this.state.page) {
     try {
-        this.setState({isLoadingImage: true,})
-    const response = await axios.get(`/?key=${KEY}&q=${this.state.imageName}&page=${this.state.page}&image_type=photo&orientation=horizontal&per_page=12`)
-    // console.log(response)
+      this.setState({ isLoadingImage: true, })
+      const images = await addImages(this.state.imageName, this.state.page)
+    // const response = await axios.get(`/?key=${KEY}&q=${this.state.imageName}&page=${this.state.page}&image_type=photo&orientation=horizontal&per_page=12`)
       this.setState({
-      images: [...this.state.images, ...response.data.hits],
+      images: [...this.state.images, ...images],
       isLoadingImage: false,
     })
     } catch (error) {
-    
+      this.setState({ error: true});
+      console.log(error);
     }
     }
   }
@@ -62,10 +64,16 @@ export class App extends Component {
   
 
   render() {
-    const { images, isLoadingImage, showModal, largeImageURL} = this.state;
+    const { images, isLoadingImage, showModal, largeImageURL, error} = this.state;
     return (
       <>
         <Searchbar onSubmit={this.handleFormSubmit} />
+        {error && (
+          <p>
+            Щось трапилось :( Перезавантажте сторінку та спробуйте ще
+            раз.
+          </p>
+        )}
         <ImageGallery images={images} onSelect={this.handleSelectImg} onModalClick={this.toggleModal} />
         {images.length > 0 && <LoadMore onClick={this.handleAddPage} />}
         
