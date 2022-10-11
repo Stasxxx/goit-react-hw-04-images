@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ContentLoader from 'react-content-loader';
+import { Loder } from './ContentLoder/ContentLoder';
+// import ContentLoader from 'react-content-loader';
 // import axios from 'axios';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -20,6 +21,7 @@ export class App extends Component {
     isLoadingImage: false,
     showModal: false,
     largeImageURL: '',
+    totalImages: '',
   }
 
   handleFormSubmit = imageName => {
@@ -37,10 +39,12 @@ export class App extends Component {
     try {
       this.setState({ isLoadingImage: true, })
       const images = await addImages(this.state.imageName, this.state.page)
+      // console.log(images)
     // const response = await axios.get(`/?key=${KEY}&q=${this.state.imageName}&page=${this.state.page}&image_type=photo&orientation=horizontal&per_page=12`)
       this.setState({
-      images: [...this.state.images, ...images],
+      images: [...this.state.images, ...images.hits],
       isLoadingImage: false,
+      totalImages: images.totalHits,
     })
     } catch (error) {
       this.setState({ error: true});
@@ -62,9 +66,11 @@ export class App extends Component {
     this.setState(({showModal})=>({showModal: !showModal}))
   }
   
-
+  
   render() {
-    const { images, isLoadingImage, showModal, largeImageURL, error} = this.state;
+    let lengthGalleryImg = this.state.images.length
+    // console.log(this.hideButton()) 
+    const { images, isLoadingImage, showModal, largeImageURL, error, totalImages} = this.state;
     return (
       <>
         <Searchbar onSubmit={this.handleFormSubmit} />
@@ -75,25 +81,9 @@ export class App extends Component {
           </p>
         )}
         <ImageGallery images={images} onSelect={this.handleSelectImg} onModalClick={this.toggleModal} />
-        {images.length > 0 && <LoadMore onClick={this.handleAddPage} />}
+        {images.length > 0 && lengthGalleryImg !== totalImages && <LoadMore onClick={this.handleAddPage} />}
         
-        {isLoadingImage && <ContentLoader 
-            speed={1.5}
-            width={1800}
-            height={860}
-            viewBox="0 0 1800 860"
-            backgroundColor="#f3f3f3"
-            foregroundColor="#ecebeb"
-          >
-          <rect x="10" y="10" rx="0" ry="0" width="360" height="260" /> 
-          <rect x="390" y="10" rx="0" ry="0" width="360" height="260" />
-          <rect x="770" y="10" rx="0" ry="0" width="360" height="260" />
-          <rect x="1150" y="10" rx="0" ry="0" width="360" height="260" />
-          <rect x="10" y="280" rx="0" ry="0" width="360" height="260" />
-          <rect x="390" y="280" rx="0" ry="0" width="360" height="260" />
-          <rect x="770" y="280" rx="0" ry="0" width="360" height="260" />
-          <rect x="1150" y="280" rx="0" ry="0" width="360" height="260" />
-        </ContentLoader>}
+        {isLoadingImage && <Loder/>}
         {showModal && <ModalImg onClose={this.toggleModal} imageURL={largeImageURL} />}
         
         <ToastContainer autoClose={2500} position="top-center"/>
