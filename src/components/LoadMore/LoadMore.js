@@ -1,7 +1,12 @@
+import PropTypes from 'prop-types';
 import { Btn } from 'components/LoadMore/LoadMore.styled';
 import { Component } from 'react';
 
 export class LoadMore extends Component{
+    static propTypes = {
+        onClick: PropTypes.func.isRequired,
+    }
+
     state = {
         page: 1,
     }
