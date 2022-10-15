@@ -1,29 +1,27 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { Btn } from 'components/LoadMore/LoadMore.styled';
-import { Component } from 'react';
+import { useState } from 'react';
 
-export class LoadMore extends Component{
-    static propTypes = {
-        onClick: PropTypes.func.isRequired,
-    }
+export const LoadMore= ({onClick}) => {
+    const [ page, setPage ] = useState(1);
 
-    state = {
-        page: 1,
-    }
+    // state = {
+    //     page: 1,
+    // }
 
-    handleAddPage = (e) => {
+   const handleAddPage = (e) => {
         if (e.currentTarget) {
-            this.setState(prevState => {
-             return { page: prevState.page + 1 }
-        });
-        }
-        this.props.onClick(this.state.page)
+            setPage(state =>  state + 1 );
+       }
+        onClick(page)
     }
 
-    render() {
-        return (
-        <Btn type="button" onClick={this.handleAddPage}>Load More</Btn>
-    )
-    }
     
+        return (
+        <Btn type="button" onClick={handleAddPage}>Load More</Btn>
+    )
 }
+
+// static propTypes = {
+//         onClick: PropTypes.func.isRequired,
+//     }

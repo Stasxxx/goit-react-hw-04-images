@@ -4,7 +4,6 @@ import { ImGallery } from "./ImageGallery.styled"
 
 
 export const ImageGallery = ({ images, onSelect, onModalClick }) => {
-    // console.log(images)
     return (
     <ImGallery onClick={()=>onModalClick()}>
             {images.map(image => <ImageGalleryItem key={image.id} webformatUrl={image.webformatURL} alt={image.tags} largeImageURL={image.largeImageURL} onSelect={onSelect } />)}
