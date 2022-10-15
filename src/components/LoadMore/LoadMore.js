@@ -1,13 +1,9 @@
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Btn } from 'components/LoadMore/LoadMore.styled';
 import { useState } from 'react';
 
-export const LoadMore= ({onClick}) => {
+export const LoadMore = ({onClick}) => {
     const [ page, setPage ] = useState(1);
-
-    // state = {
-    //     page: 1,
-    // }
 
    const handleAddPage = (e) => {
         if (e.currentTarget) {
@@ -22,6 +18,6 @@ export const LoadMore= ({onClick}) => {
     )
 }
 
-// static propTypes = {
-//         onClick: PropTypes.func.isRequired,
-//     }
+LoadMore.propTypes = {
+        onClick: PropTypes.func.isRequired,
+    }

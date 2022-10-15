@@ -1,9 +1,10 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Loder } from './ContentLoder/ContentLoder';
 // import ContentLoader from 'react-content-loader';
 // import axios from 'axios';
+import { toast } from 'react-toastify';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { LoadMore } from 'components/LoadMore/LoadMore';
@@ -13,83 +14,86 @@ import { addImages } from 'components/services/api';
 // axios.defaults.baseURL = 'https://pixabay.com/api';
 // const KEY = '29487133-26ae31273c20ec953386c6e64';
 // axios.defaults.headers.common['x-api-key'] = process.env.REACT_APP_API_KEY;
-export class App extends Component {
-  state = {
-    images: [],
-    page: 1,
-    imageName: '',
-    isLoadingImage: false,
-    showModal: false,
-    largeImageURL: '',
-    totalImages: '',
-  }
+export const App = () => {
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [imageName, setImageName] = useState('');
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const [showModal, setshowModal] = useState(false);
+  const [largeImageURL, setlargeImageURL] = useState('');
+  const [totalImages, setTotalImages] = useState('');
+  const [error, setError] = useState(false);
 
-  handleFormSubmit = imageName => {
-    this.setState({
-      images: [],
-      page: 1,
-      imageName: imageName,
-      largeImageURL: '',
-      error: false,
-    });
+  
+  const handleFormSubmit = imageName => {
+    setImages([]);
+    setPage(1);
+    setImageName(imageName);
+    setlargeImageURL('');
+    setError(false);
   };
 
-  async componentDidUpdate(_, prevState) {
-    if (prevState.imageName !== this.state.imageName || prevState.page !== this.state.page) {
-    try {
-      this.setState({ isLoadingImage: true, })
-      const images = await addImages(this.state.imageName, this.state.page)
-      // console.log(images)
-    // const response = await axios.get(`/?key=${KEY}&q=${this.state.imageName}&page=${this.state.page}&image_type=photo&orientation=horizontal&per_page=12`)
-      this.setState({
-      images: [...this.state.images, ...images.hits],
-      isLoadingImage: false,
-      totalImages: images.totalHits,
-    })
-    } catch (error) {
-      this.setState({ error: true});
-      console.log(error);
+useEffect(() => {
+ 
+  async function fatchImages() {
+    if (imageName === '') {
+      return;
     }
-    }
+      try {
+        
+        const images = await addImages(imageName, page);
+        if (images.hits.length === 0) {
+          return toast.error(':( Нічого не знайдено. Спробуйте ще раз ');
+        }
+        setIsLoadingImage(true);
+        setImages(state => ([...state, ...images.hits]));
+        
+        setIsLoadingImage(false);
+        setTotalImages(images.totalHits);
+      
+      } catch (error) {
+        setError(true);
+        console.log(error);
+      }
   }
 
-  handleAddPage = page => {
-    this.setState({ page });
+
+  fatchImages()
+}, [imageName, page])
+
+  
+
+  const handleAddPage = page => {
+    setPage(page);
   }
 
-  handleSelectImg = img => {
-    this.setState({ largeImageURL: img })
+  const handleSelectImg = img => {
+    setlargeImageURL(img);
     
   }
 
-  toggleModal = () => {
-    this.setState(({showModal})=>({showModal: !showModal}))
+  const toggleModal = () => {
+    setshowModal(showModal => !showModal );
   }
   
-  
-  render() {
-    let lengthGalleryImg = this.state.images.length
-    // console.log(this.hideButton()) 
-    const { images, isLoadingImage, showModal, largeImageURL, error, totalImages} = this.state;
+    let lengthGalleryImg = images.length
+    
     return (
       <>
-        <Searchbar onSubmit={this.handleFormSubmit} />
+        <Searchbar onSubmit={handleFormSubmit} />
         {error && (
           <p>
             Щось трапилось :( Перезавантажте сторінку та спробуйте ще
             раз.
           </p>
         )}
-        <ImageGallery images={images} onSelect={this.handleSelectImg} onModalClick={this.toggleModal} />
-        {images.length > 0 && lengthGalleryImg !== totalImages && <LoadMore onClick={this.handleAddPage} />}
+        <ImageGallery images={images} onSelect={handleSelectImg} onModalClick={toggleModal} />
+        {images.length > 0 && lengthGalleryImg !== totalImages && <LoadMore onClick={handleAddPage} />}
         
         {isLoadingImage && <Loder/>}
-        {showModal && <ModalImg onClose={this.toggleModal} imageURL={largeImageURL} />}
+        {showModal && <ModalImg onClose={toggleModal} imageURL={largeImageURL} />}
         
         <ToastContainer autoClose={2500} position="top-center"/>
       </>
     );
-    
-  }
-  
 }
